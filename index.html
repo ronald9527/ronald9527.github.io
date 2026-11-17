@@ -83,12 +83,14 @@
   .wball.square{border-radius:5px}
   .wball.diamond{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);width:29px;height:29px;flex-basis:29px}
   .wball.sp{outline:2px solid #f0b429;outline-offset:1px}
-  /* ===== 每球生肖小字（圈下） ===== */
-  .balls{align-items:flex-start}
-  .balls .eq{margin-top:7px}
-  .ballcell{display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:28px;vertical-align:top}
-  .ballcell .zx{font-size:9px;line-height:1;color:var(--sub);white-space:nowrap;font-style:normal;letter-spacing:0}
-  .ballcell .zx.spz{color:#b8860b;font-weight:700}
+  /* ===== 号码 + 对应生肖 同处一个波色圆圈内 ===== */
+  .balls{align-items:center}
+  .balls .eq{margin:0 2px}
+  .ballcell{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+  .wball{flex-direction:column;gap:0;width:31px;height:31px;flex:0 0 31px;line-height:1}
+  .wball .n{font-size:10.5px;font-weight:700;color:#fff;line-height:1.15}
+  .wball .zx{font-size:8.5px;color:#fff;opacity:.95;line-height:1;white-space:nowrap;font-style:normal;letter-spacing:0}
+  .wball.sp .zx{color:#ffe08a;opacity:1;font-weight:700}
   .zsum{display:block;margin-top:3px;font-size:10.5px;color:#8a5a00;font-variant-numeric:tabular-nums}
 
   .balls{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
@@ -502,8 +504,7 @@ function ballHTML(n, isSp){
   const zh = {red:'红波',blue:'蓝波',green:'绿波',unknown:'未登记'}, zx = zodiacOf(n);
   const cls = 'wball '+(w==='unknown'?'unknown':w)+' '+shape+(isSp?' sp':'');
   return `<span class="ballcell" title="${String(n)} · ${zh[w]||w} · ${zx}${isSp?' · 特码':''}">`
-       + `<span class="${cls}">${String(n)}</span>`
-       + `<span class="zx${isSp?' spz':''}">${zx}</span>`
+       + `<span class="${cls}"><span class="n">${String(n)}</span><span class="zx">${zx}</span></span>`
        + `</span>`;
 }
 function waveSummary(nums, sp){
@@ -518,7 +519,7 @@ function renderWaveLegend(){
     const sh=cfg.map[k]||'circle';           // 统一圆形，颜色即波色
     return `<span class="lg"><i class="wball ${k} ${sh}"></i>${nm[k]}</span>`;
   }).join('') + `<span class="lg"><b>=</b> 之后为特码（金边）</span>`
-             + `<span class="lg">圈下小字＝生肖</span>`;
+             + `<span class="lg">圈内下行＝生肖</span>`;
 }
 
 function renderHistory(){

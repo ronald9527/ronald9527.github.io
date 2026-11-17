@@ -1643,7 +1643,7 @@
     "status": "已全量同步到云端",
     "provider": "GitHub Pages（0 元）",
     "repo": "ronald9527/ronald9527.github.io",
-    "commit": "12ba66d4",
+    "commit": "d0ee0bc2",
     "site": "https://ronald9527.github.io/",
     "authority": "https://ronald9527.github.io/data.json",
     "synced_at": "2026-11-17",
@@ -1846,13 +1846,16 @@
   },
   "ball_labels": {
     "status": "已登记",
-    "note": "每颗波色圆圈下方显示该号码对应的 2026 生肖；特码生肖金色加粗",
+    "note": "每个号码与其对应的 2026 生肖一起显示在同一个波色圆圈内：圈内上行＝号码，下行＝生肖；圈色＝波色",
     "source_field": "zodiac",
-    "display": "圈下小字（不改动圆形与波色颜色）",
-    "special": "特码生肖金色加粗",
+    "display": "号码与生肖同球（圈内两行），不再单独放圈下小字",
+    "special": "特码圈金色描边，圈内生肖金色加粗",
     "fallback_rule": "规则未加载时按 2026 马年 (号码-1)%12 → 马蛇龙兔虎牛鼠猪狗鸡猴羊",
-    "summary_line": "每行另加「生肖 马N · 蛇N …」汇总（含特码）",
-    "registered_at": "2026-11-17"
+    "summary_line": "每行保留「波色 红N·蓝N·绿N」与「生肖 马N·蛇N…」两行汇总（含特码）",
+    "legend": "图例标注「圈内下行＝生肖」",
+    "registered_at": "2026-11-17",
+    "revised_at": "2026-11-17",
+    "revision": "用户要求『号码把对应的生肖也加上』→ 生肖从圈下移入圈内，与号码同一个球"
   },
   "_note": "云端公开台账快照（业务数据）；对话操作日志不公开"
 }
