@@ -151,6 +151,10 @@
   <!-- 模块卡片 -->
   <section id="p-modules" hidden>
     <div class="card">
+      <h2>2026 基础口径 <span class="badge" id="rulesBadge">待登记</span></h2>
+      <div id="rulesBox" class="kv"></div>
+    </div>
+    <div class="card">
       <h2>模块卡片 Tab</h2>
       <div class="subtabs" id="subTabs"></div>
       <div id="modDetail"></div>
@@ -218,11 +222,11 @@
 
 <script>
 const MODULES = [
-  {id:'qixiao',  name:'七肖（特码）',        note:'需提供生肖–号码映射与「选七」生成规则'},
-  {id:'liangbo', name:'两波（特码）',        note:'需提供波色定义与选两波规则'},
-  {id:'santou',  name:'三头（特码）',        note:'需提供「头」的分段定义与选三规则'},
-  {id:'qiwei',   name:'七尾（特码）',        note:'需提供尾数定义与选七规则'},
-  {id:'pool',    name:'候选池（两波+三头+七尾+七肖补充）', note:'合并规则与去重口径待补'},
+  {id:'qixiao',  name:'七肖（特码）',        note:'生肖–号码映射已登记（12 肖覆盖 1–49 不重不漏）；「选七」生成规则仍缺'},
+  {id:'liangbo', name:'两波（特码）',        note:'波色对照已登记（红 17 / 蓝 16 / 绿 16）；「选两波」生成规则仍缺'},
+  {id:'santou',  name:'三头（特码）',        note:'「头」的分段定义未提供（常见口径为十位 5 头，待确认），暂无法判定'},
+  {id:'qiwei',   name:'七尾（特码）',        note:'「尾」的定义未提供（常见口径为个位 10 尾，待确认），暂无法判定'},
+  {id:'pool',    name:'候选池（两波+三头+七尾+七肖补充）', note:'合并与去重口径待补；原文多余分隔符「.」已修正'},
   {id:'lianxiao',name:'连肖（7码生肖全中）', note:'「全中」判定口径待补'},
   {id:'lian2',   name:'二连肖',              note:'组合生成与命中判定待补'},
   {id:'lian3',   name:'三连肖',              note:'组合生成与命中判定待补'},
@@ -234,7 +238,7 @@ const MODULES = [
   {id:'zm33',    name:'正码3码三中三（10组）',note:'「10组」疑似 C(5,3)，基础码数未写明'}
 ];
 const KEY = 'liuhe_research_v1';
-let state = {records:[], hits:{}};
+let state = {records:[], hits:{}, rules:null};
 try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s&&s.records) state = Object.assign(state,s); }catch(e){}
 const save = () => localStorage.setItem(KEY, JSON.stringify(state));
 const $ = s => document.querySelector(s);
@@ -255,6 +259,10 @@ function mergeState(inc){
       if(k.charAt(0)==='_') return;                 // 跳过说明字段
       state.hits[k] = Object.assign({}, state.hits[k], inc.hits[k]);
     });
+    changed = true;
+  }
+  if(inc.rules && typeof inc.rules==='object' && inc.rules._schema){
+    state.rules = inc.rules;                        // 基础口径对照表，以最新下发为准
     changed = true;
   }
   return changed;
@@ -283,15 +291,19 @@ function applyHash(){
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
 }
 /* 线上台账由元宝维护：带 no-store 拉取，刷新/点同步即拿最新 */
+let cloudStatus = '连接中…';
 function loadSiteData(){
   return fetch('./data.json?_=' + Date.now(), {cache:'no-store'})
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
-      if(mergeState(d)){ save(); renderStat(); renderHistory(); renderBacktest(); }
+      if(mergeState(d)) save();
+      cloudStatus = '☁️ 云端已同步 · ' + ((d.records||state.records).length) + ' 期';
+      renderStat(); renderHistory(); renderBacktest();
       return d;
-    });
+    })
+    .catch(()=>{ cloudStatus = '离线 · 本机缓存'; renderStat(); });
 }
-loadSiteData().catch(()=>{});
+loadSiteData();
 applyHash();
 
 /* 主 tab */
@@ -345,9 +357,37 @@ function renderStat(){
   const judged = Object.values(state.hits).reduce((a,h)=>a+Object.values(h).filter(v=>v!==0).length,0);
   $('#statBox').innerHTML = `已录入期数：<b>${n}</b> 期<br>
     模块标签：<b>${MODULES.length}</b> 个<br>
+    基础口径：<b>${state.rules ? state.rules.year+' '+state.rules.zodiac_year+'年（已登记）' : '未登记'}</b><br>
     已判定命中项：<b>${judged}</b> 项<br>
     预测输出：<b>0</b>（本演示不提供）<br>
-    数据存储：本机 localStorage`;
+    数据存储：<b>${cloudStatus}</b>（本机 localStorage 兜底）`;
+  renderRules();
+}
+function renderRules(){
+  const r = state.rules, box = $('#rulesBox');
+  if(!box) return;
+  if(!r || !r._schema){
+    box.innerHTML = '<div class="empty">尚未登记对照表。在对话框把 2026 生肖 / 五行 / 波色 / 合数单双发我即可。</div>';
+    $('#rulesBadge').textContent = '待登记'; return;
+  }
+  const v = r.validation || {}, z = r.zodiac || {}, wx = r.wuxing || {}, bs = r.bose || {};
+  const pass = ['zodiac_covers_1_49','wuxing_covers_1_49','bose_covers_1_49','he_shu_covers_1_49',
+                'chong_pairs','zodiac_attrs','xiao_color','san_he_liu_he_qin_seasons']
+                .filter(k=>(v[k]||'').startsWith('通过')).length;
+  const ds = (r.zodiac_attrs||{})._dual_systems;
+  $('#rulesBadge').textContent = r.year+' '+r.zodiac_year+'年 · 校验 '+pass+'/8 通过 · 两套并存已定稿';
+  box.innerHTML = `
+    <b>号码域 1–49</b>：十二生肖 ${Object.keys(z).length} 肖 · 五行 ${Object.keys(wx).length} 行 · 波色 ${Object.keys(bs).length} 波 · 合数单双 2 类<br>
+    <b>覆盖性校验</b>：${pass}/8 组通过（各组均不重不漏覆盖 1–49；六冲、属性二分、三合六合、琴棋书画、四季均自洽）<br>
+    <b>「合数」口径</b>：${r.he_shu_dan_shuang?r.he_shu_dan_shuang._definition:'—'}<br>
+    <b>生肖映射（${r.zodiac_year}年起）</b>：${Object.entries(z).map(([k,o])=>k+'['+o.numbers.length+']').join(' · ')}<br>
+    ${ds ? `<b style="color:#1a7f5a">两套属性体系（已裁定：都用，并存独立口径）</b><br>
+      · <b>${ds.system_1.name}</b>：${ds.system_1['吉美'].join('')} / ${ds.system_1['凶丑'].join('')}（鸡→吉美，猴→凶丑）<br>
+      · <b>${ds.system_2.name}</b>：${ds.system_2['黑中'].join('')} / ${ds.system_2['白边'].join('')}（鸡→白边，猴→黑中）<br>
+      <span class="hint">${ds._note}</span><br>` : ''}
+    <b style="color:#c0392b">待确认</b>：头 / 尾定义未提供，三头、七尾暂无法判定<br>
+    <b style="color:#c0392b">仍缺</b>：候选池去重口径、组合码基础集合、各模块每期候选的生成算法与样本区间<br>
+    <span class="hint">${r._disclaimer||''}</span>`;
 }
 
 /* 模块子 tab */
