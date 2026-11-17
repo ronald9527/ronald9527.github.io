@@ -300,6 +300,7 @@ function mergeState(inc, replace){
     state.rules = inc.rules;                        // 基础口径对照表，以最新下发为准
     changed = true;
   }
+  if(typeof inc.paginationGap === 'number'){ state.paginationGap = inc.paginationGap; changed = true; }
   return changed;
 }
 function b64encode(str){
@@ -391,10 +392,10 @@ function renderStat(){
   const n = state.records.length;
   const judged = Object.values(state.hits).reduce((a,h)=>a+Object.values(h).filter(v=>v!==0).length,0);
   const latest = state.records.length ? state.records.slice().sort((a,b)=>String(b.issue).localeCompare(String(a.issue)))[0] : null;
-  const gap = state.paginationGap || 127;
+  const gap = (typeof state.paginationGap === 'number') ? state.paginationGap : 31;
   $('#statBox').innerHTML = `已录入期数：<b>${n}</b> 期<br>
     最新一期：<b>${latest ? latest.issue+' / '+latest.date : '—'}</b><br>
-    历史待补：<b>${gap}</b> 期（翻页截图后由元宝补录）<br>
+    历史待补：<b>${gap}</b> 期（元宝自动翻页补录中）<br>
     模块标签：<b>${MODULES.length}</b> 个<br>
     基础口径：<b>${state.rules ? state.rules.year+' '+state.rules.zodiac_year+'年（已登记）' : '未登记'}</b><br>
     已判定命中项：<b>${judged}</b> 项<br>
