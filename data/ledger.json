@@ -1817,5 +1817,31 @@
     "official_archive_warning": "lottery.hk / lotteries.com 的官方马会结果为 26/xxx 期号、周二/四/六开奖，与本天天开彩体系不同，不得混入本台账",
     "next_action": "用户每翻一页发两张截图（球号页 + №/日期页），元宝逐字录入、合并去重、推云端，刷新即见"
   },
+  "wave_shapes": {
+    "status": "已登记",
+    "note": "历史战绩里每个号码按波色渲染成对应形状；形状映射可在对话框一句话改",
+    "map": {
+      "red": "circle",
+      "blue": "square",
+      "green": "diamond"
+    },
+    "shape_labels": {
+      "circle": "圆",
+      "square": "方",
+      "diamond": "菱"
+    },
+    "labels": {
+      "red": "红波",
+      "blue": "蓝波",
+      "green": "绿波"
+    },
+    "special_marker": "= 之后为特码，金色描边",
+    "colors": {
+      "red": "#e5484d",
+      "blue": "#3b7ddd",
+      "green": "#2fa36b"
+    },
+    "registered_at": "2026-11-17"
+  },
   "_note": "云端公开台账快照（业务数据）；对话操作日志不公开"
 }

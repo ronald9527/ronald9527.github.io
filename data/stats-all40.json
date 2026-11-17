@@ -2320,5 +2320,31 @@
     "count": 127,
     "note": "统计不含缺口期，勿据此推断总体频率"
   },
-  "口径": "描述性频次统计；不外推、不生成下期候选"
+  "口径": "描述性频次统计；不外推、不生成下期候选",
+  "波色形状显示": {
+    "status": "已登记",
+    "note": "历史战绩里每个号码按波色渲染成对应形状；形状映射可在对话框一句话改",
+    "map": {
+      "red": "circle",
+      "blue": "square",
+      "green": "diamond"
+    },
+    "shape_labels": {
+      "circle": "圆",
+      "square": "方",
+      "diamond": "菱"
+    },
+    "labels": {
+      "red": "红波",
+      "blue": "蓝波",
+      "green": "绿波"
+    },
+    "special_marker": "= 之后为特码，金色描边",
+    "colors": {
+      "red": "#e5484d",
+      "blue": "#3b7ddd",
+      "green": "#2fa36b"
+    },
+    "registered_at": "2026-11-17"
+  }
 }

@@ -69,6 +69,25 @@
   .kv{font-size:12.5px;line-height:1.9;color:var(--ink)}
   .kv code{background:#f0f2f8;padding:1px 5px;border-radius:5px;font-size:12px}
   .badge{display:inline-block;font-size:11px;color:var(--sub);background:#f0f2f8;border-radius:6px;padding:2px 7px;margin-left:6px}
+
+  /* ===== 波色形状球（历史战绩） ===== */
+  .wavebar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:0 0 10px;font-size:11.5px;color:var(--sub)}
+  .wavebar .lg{display:inline-flex;align-items:center;gap:5px}
+  .wball{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;flex:0 0 27px;
+    font-size:11.5px;font-weight:700;color:#fff;line-height:1;letter-spacing:-.4px;font-style:normal}
+  .wball.red{background:#e5484d}
+  .wball.blue{background:#3b7ddd}
+  .wball.green{background:#2fa36b}
+  .wball.unknown{background:#9ca3af}
+  .wball.circle{border-radius:50%}
+  .wball.square{border-radius:5px}
+  .wball.diamond{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);width:29px;height:29px;flex-basis:29px}
+  .wball.sp{outline:2px solid #f0b429;outline-offset:1px}
+  .balls{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+  .balls .eq{color:var(--sub);font-weight:700;margin:0 2px}
+  .wavesum{display:block;margin-top:5px;font-size:10.5px;color:var(--sub);font-variant-numeric:tabular-nums}
+  .wavesum b{font-weight:600}
+  .wavesum .r{color:#e5484d}.wavesum .b{color:#3b7ddd}.wavesum .g{color:#2fa36b}
 </style>
 </head>
 <body>
@@ -165,6 +184,7 @@
   <section id="p-history" hidden>
     <div class="card">
       <h2>开奖记录 / 历史战绩</h2>
+      <div class="wavebar" id="waveLegend"></div>
       <div id="historyTable"></div>
     </div>
   </section>
@@ -426,15 +446,59 @@ $('#subTabs').addEventListener('click',e=>{
 showMod(0);
 
 /* 历史 */
+
+/* ===== 波色 → 形状 ===== */
+const WAVE_FALLBACK = {
+  red:[1,2,7,8,12,13,18,19,23,24,29,30,34,35,40,45,46],
+  blue:[3,4,9,10,14,15,20,25,26,31,36,37,41,42,47,48],
+  green:[5,6,11,16,17,21,22,27,28,32,33,38,39,43,44,49]
+};
+function waveCfg(){
+  const cfg = (state.rules||{}).wave_shapes;
+  return (cfg && cfg.map) ? cfg : {map:{red:'circle',blue:'square',green:'diamond'}};
+}
+function waveOf(n){
+  const num = parseInt(n,10), b = (state.rules||{}).bose;
+  if(b && typeof b==='object'){
+    const zh = {'红波':'red','蓝波':'blue','绿波':'green'};
+    for(const k of Object.keys(b)){
+      if((b[k]||[]).some(x=>Number(x)===num)) return zh[k]||'unknown';
+    }
+    return 'unknown';
+  }
+  for(const k of ['red','blue','green']) if(WAVE_FALLBACK[k].indexOf(num)>=0) return k;
+  return 'unknown';
+}
+function ballHTML(n, isSp){
+  const w = waveOf(n), cfg = waveCfg(), shape = cfg.map[w]||'circle';
+  const zh = {red:'红波',blue:'蓝波',green:'绿波',unknown:'未登记'};
+  const cls = 'wball '+(w==='unknown'?'unknown':w)+' '+shape+(isSp?' sp':'');
+  return `<span class="${cls}" title="${String(n)} · ${zh[w]||w}${isSp?' · 特码':''}">${String(n)}</span>`;
+}
+function waveSummary(nums, sp){
+  const c={red:0,blue:0,green:0,unknown:0};
+  nums.concat([sp]).forEach(n=>c[waveOf(n)]++);
+  return `<span class="wavesum">波色 <b class="r">红${c.red}</b> · <b class="b">蓝${c.blue}</b> · <b class="g">绿${c.green}</b>${c.unknown?' · 未知'+c.unknown:''}</span>`;
+}
+function renderWaveLegend(){
+  const box=$('#waveLegend'); if(!box) return;
+  const cfg=waveCfg(), nm={red:'红波',blue:'蓝波',green:'绿波'}, sn={circle:'圆',square:'方',diamond:'菱'};
+  box.innerHTML = ['red','blue','green'].map(k=>{
+    const sh=cfg.map[k]||'circle';
+    return `<span class="lg"><i class="wball ${k} ${sh}"></i>${nm[k]}·${sn[sh]||sh}</span>`;
+  }).join('') + `<span class="lg"><b>=</b> 之后为特码（金边）</span>`;
+}
+
 function renderHistory(){
+  renderWaveLegend();
   const box=$('#historyTable');
   if(!state.records.length){ box.innerHTML='<div class="empty">暂无记录，请先在「录入开奖 6+1」添加</div>'; return; }
-  box.innerHTML = `<table><thead><tr><th>期号</th><th>日期</th><th>6 正码 + 特码</th><th>已判定</th><th>操作</th></tr></thead><tbody>`+
+  box.innerHTML = `<table><thead><tr><th>期号</th><th>日期</th><th>6 正码 = 特码</th><th>已判定</th><th>操作</th></tr></thead><tbody>`+
     state.records.slice().sort((a,b)=>String(b.issue).localeCompare(String(a.issue))).map(r=>{
       const h=state.hits[r.issue]||{};
       const j=Object.values(h).filter(v=>v===1||v===2).length;
       return `<tr><td>${r.issue}</td><td>${r.date||'—'}</td>
-        <td class="nums-cell">${r.nums.join(' ')} <span class="special">${r.sp}</span></td>
+        <td class="nums-cell"><div class="balls">${r.nums.map(n=>ballHTML(n,false)).join('')}<span class="eq">=</span>${ballHTML(r.sp,true)}</div>${waveSummary(r.nums,r.sp)}</td>
         <td>${j}/${MODULES.length}</td>
         <td><button class="mini danger" data-del="${r.issue}">删除</button></td></tr>`;
     }).join('')+'</tbody></table>';
@@ -534,7 +598,7 @@ $('#btnLink').onclick = ()=>{
   }else{ document.execCommand('copy'); done(); }
 };
 
-renderStat(); renderBacktest();
+renderStat(); renderHistory(); renderBacktest(); renderWaveLegend();
 
 /* 离线缓存是可选增强：有 sw.js 才注册；只拖单个 index.html 时静默跳过 */
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

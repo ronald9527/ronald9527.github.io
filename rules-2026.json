@@ -696,5 +696,31 @@
     "【学术边界】对照表属于号码→类别的静态映射，可用于事后命中判定，不具备外推预测力"
   ],
   "_disclaimer": "开奖为随机事件，历史频率不具外推预测力。本表仅供描述性统计与命中口径核对，不预测号码、不构成投注建议。",
-  "resolved_at": "2026-11-17"
+  "resolved_at": "2026-11-17",
+  "wave_shapes": {
+    "status": "已登记",
+    "note": "历史战绩里每个号码按波色渲染成对应形状；形状映射可在对话框一句话改",
+    "map": {
+      "red": "circle",
+      "blue": "square",
+      "green": "diamond"
+    },
+    "shape_labels": {
+      "circle": "圆",
+      "square": "方",
+      "diamond": "菱"
+    },
+    "labels": {
+      "red": "红波",
+      "blue": "蓝波",
+      "green": "绿波"
+    },
+    "special_marker": "= 之后为特码，金色描边",
+    "colors": {
+      "red": "#e5484d",
+      "blue": "#3b7ddd",
+      "green": "#2fa36b"
+    },
+    "registered_at": "2026-11-17"
+  }
 }
