@@ -201,5 +201,17 @@
     "candidate_count": 6,
     "converged_conclusion": "2026-11-17：累计 6 个去重 URL。其中 5 个私彩落地页/短链/受控端点全部『不可提取或 403 受控』，不再逐个探测；第 6 个为公开统计站，首次成功读到逐期号码，但非官方、自认不保证准确、彩种无可核验一手发布主体 → 只作未核验参考，不入主样本。判定标准统一为『能否第三方复现』，而非『能否读到』。主台账仅接收手动开奖号或官方可审计来源"
   },
-  "_note": "云端公开台账快照（业务数据）；对话操作日志不公开"
+  "_note": "云端公开台账快照（业务数据）；对话操作日志不公开",
+  "cloud": {
+    "status": "已全量同步到云端",
+    "provider": "GitHub Pages（0 元）",
+    "repo": "ronald9527/ronald9527.github.io",
+    "commit": "16ca0fae",
+    "site": "https://ronald9527.github.io/",
+    "authority": "https://ronald9527.github.io/data.json",
+    "synced_at": "2026-11-17",
+    "files": 17,
+    "behavior": "页面启动以 no-store 拉取云端 data.json；任何设备打开同一链接看到同一份数据，刷新即最新；本机 localStorage 仅离线兜底",
+    "update_flow": "用户在对话里发开奖号/改需求 → 元宝更新 data.json 并推送仓库 → 用户刷新即见，零上传零重装"
+  }
 }
