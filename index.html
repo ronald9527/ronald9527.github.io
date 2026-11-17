@@ -245,13 +245,18 @@ const $ = s => document.querySelector(s);
 const pad = n => String(n).padStart(2,'0');
 
 /* ===== 数据通道：本机 / 随站 data.json / 对话里给的链接或 JSON ===== */
-function mergeState(inc){
+function mergeState(inc, replace){
   if(!inc || typeof inc!=='object') return false;
   let changed = false;
   if(Array.isArray(inc.records) && inc.records.length){
-    const map = new Map(state.records.map(r=>[String(r.issue), r]));
-    inc.records.forEach(r=>{ if(r && r.issue) map.set(String(r.issue), r); });
-    state.records = [...map.values()].sort((a,b)=>String(a.issue).localeCompare(String(b.issue)));
+    if(replace){
+      // 云端是唯一权威源：直接覆盖，避免旧期号口径残留造成重复计数
+      state.records = inc.records.slice().sort((a,b)=>String(a.issue).localeCompare(String(b.issue)));
+    }else{
+      const map = new Map(state.records.map(r=>[String(r.issue), r]));
+      inc.records.forEach(r=>{ if(r && r.issue) map.set(String(r.issue), r); });
+      state.records = [...map.values()].sort((a,b)=>String(a.issue).localeCompare(String(b.issue)));
+    }
     changed = true;
   }
   if(inc.hits && typeof inc.hits==='object' && Object.keys(inc.hits).length){
@@ -286,7 +291,7 @@ function applyHash(){
   try{
     const raw = decodeURIComponent(h.slice(3));
     const inc = JSON.parse(raw.charAt(0)==='{' ? raw : b64decode(raw));
-    if(mergeState(inc)){ save(); renderStat(); renderHistory(); renderBacktest(); }
+    if(mergeState(inc)){ save(); renderStat(); renderHistory(); renderBacktest(); }  // 对话链接：增量合并
   }catch(e){}
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
 }
@@ -296,8 +301,8 @@ function loadSiteData(){
   return fetch('./data.json?_=' + Date.now(), {cache:'no-store'})
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
-      if(mergeState(d)) save();
-      cloudStatus = '☁️ 云端已同步 · ' + ((d.records||state.records).length) + ' 期';
+      mergeState(d, true); save();
+      cloudStatus = '☁️ 云端已同步 · ' + state.records.length + ' 期';
       renderStat(); renderHistory(); renderBacktest();
       return d;
     })

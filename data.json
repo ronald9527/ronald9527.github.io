@@ -1221,6 +1221,8 @@
       "保留页面 7 球原始抽出顺序 balls；6正码/1特码切分标注为推定",
       "标注本站开奖时间 01:32 PM，与用户所述 21:40 不一致，待确认"
     ],
-    "prev_records": 5
-  }
+    "prev_records": 5,
+    "sync_note": "云端为唯一权威源；页面启动覆盖本机 records，避免旧期号键残留"
+  },
+  "_authoritative": true
 }
