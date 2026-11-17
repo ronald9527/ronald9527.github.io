@@ -1,0 +1,3 @@
+# 静态站点，无需构建产物
+.DS_Store
+Thumbs.db
