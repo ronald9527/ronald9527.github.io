@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>六合智析 · 学术统计演示版</title>
+<meta name="theme-color" content="#4f6bed">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f6bed'/%3E%3Cg fill='white'%3E%3Crect x='14' y='34' width='8' height='16' rx='2'/%3E%3Crect x='28' y='24' width='8' height='26' rx='2'/%3E%3Crect x='42' y='16' width='8' height='34' rx='2'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#f5f6fa; --card:#fff; --ink:#1f2430; --sub:#6b7280;
+    --line:#e6e8ef; --brand:#4f6bed; --brand2:#7c5cff;
+    --warn-bg:#fff6e6; --warn-ink:#8a5a00; --ok:#16a34a; --no:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","WenQuanYi Micro Hei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:16px 14px 48px}
+  header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  h1{font-size:20px;margin:0;letter-spacing:.5px}
+  .ver{font-size:12px;color:var(--sub)}
+  .notice{background:var(--warn-bg);color:var(--warn-ink);border:1px solid #f3d9a4;
+    border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.6;margin-bottom:14px}
+  .notice b{color:#7a4a00}
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;
+    scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--sub);
+    padding:8px 14px;border-radius:999px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .tab.on{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent;
+    box-shadow:0 4px 12px rgba(79,107,237,.25)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(20,30,60,.04)}
+  .card h2{font-size:15px;margin:0 0 12px}
+  .hint{font-size:12px;color:var(--sub);line-height:1.6;margin:0 0 12px}
+  label{display:block;font-size:12px;color:var(--sub);margin:10px 0 5px}
+  input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;
+    padding:10px 11px;font-size:14px;color:var(--ink);background:#fafbff;outline:none}
+  input:focus,select:focus{border-color:var(--brand);background:#fff}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .nums input{text-align:center;padding:10px 4px}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  button{font-family:inherit;font-size:13px;border-radius:10px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink)}
+  .primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent}
+  .danger{color:var(--no)}
+  .mini{padding:5px 9px;font-size:12px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+  th{color:var(--sub);font-weight:500;font-size:11.5px}
+  td.nums-cell{font-variant-numeric:tabular-nums;letter-spacing:.3px}
+  .special{display:inline-block;background:#ffe9e9;color:#c62828;border-radius:6px;padding:1px 6px;font-weight:600}
+  .empty{color:var(--sub);text-align:center;padding:22px 0;font-size:13px}
+  .subtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px;scrollbar-width:none}
+  .subtabs::-webkit-scrollbar{display:none}
+  .subtab{flex:0 0 auto;font-size:12px;padding:6px 10px;border-radius:8px;background:#f0f2f8;color:var(--sub);cursor:pointer;white-space:nowrap}
+  .subtab.on{background:var(--brand);color:#fff}
+  .modgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .mod{border:1px solid var(--line);border-radius:12px;padding:10px;font-size:12px;line-height:1.5}
+  .mod b{display:block;font-size:12.5px;margin-bottom:3px}
+  .mod span{color:var(--sub)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chip{border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:12px;background:#fafbff;cursor:pointer;user-select:none}
+  .chip.hit{background:#e8f7ee;border-color:#a7dfba;color:var(--ok)}
+  .chip.miss{background:#fdecec;border-color:#f3b6b6;color:var(--no)}
+  .foot{font-size:11.5px;color:var(--sub);text-align:center;line-height:1.7;margin-top:18px}
+  .kv{font-size:12.5px;line-height:1.9;color:var(--ink)}
+  .kv code{background:#f0f2f8;padding:1px 5px;border-radius:5px;font-size:12px}
+  .badge{display:inline-block;font-size:11px;color:var(--sub);background:#f0f2f8;border-radius:6px;padding:2px 7px;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📊 六合智析</h1>
+    <span class="ver">2026马年 · 学术统计演示版 / 核对版 v3.3</span>
+  </header>
+
+  <div class="notice">
+    <b>研究声明：</b>开奖为独立随机事件，历史数据不能推出「下一期会开出的号码」。本页只做 <b>6+1 开奖录入、模块结构留存与命中回溯台账</b>，不生成预测号、不提供投注建议，仅供学术统计与口径核对使用。原页面亦标注「历史统计模型，开奖为随机事件，仅供研究参考」「不构成投注建议」。<br>
+    <b>数据更新：</b>在对话框发我开奖记录即可，我会给一段 JSON 或带数据的链接，粘贴/点开即生效，<b>不用重新上传、不用重装</b>。
+  </div>
+
+  <div class="tabs" id="mainTabs">
+    <div class="tab on" data-p="overview">概览</div>
+    <div class="tab" data-p="entry">录入开奖 6+1</div>
+    <div class="tab" data-p="modules">模块卡片</div>
+    <div class="tab" data-p="history">历史战绩</div>
+    <div class="tab" data-p="backtest">命中回溯</div>
+    <div class="tab" data-p="about">模型说明</div>
+  </div>
+
+  <!-- 概览 -->
+  <section id="p-overview">
+    <div class="card">
+      <h2>本期结构 <span class="badge">候选池 · 演示 / 非预测</span></h2>
+      <p class="hint">按原页面标签保留卡片体系。「本期推荐」在本演示中只作为「候选池容器」，不输出任何号码；各模块的生成算法与命中判定口径尚未在原资料中给出，需补齐后才能学术复现。</p>
+      <div id="overviewMods" class="modgrid"></div>
+    </div>
+    <div class="card">
+      <h2>数据概览</h2>
+      <div class="kv" id="statBox"></div>
+    </div>
+  </section>
+
+  <!-- 录入 -->
+  <section id="p-entry" hidden>
+    <div class="card">
+      <h2>📝 录入开奖号码（6 正码 + 1 特别码）</h2>
+      <p class="hint">号码范围 1–49；6 个正码互不重复，特别码不与正码重复。保存后自动进入历史战绩与回溯面板。</p>
+      <div class="row">
+        <div><label>期号</label><input id="fIssue" placeholder="如 2026116"></div>
+        <div><label>开奖日期</label><input id="fDate" type="date"></div>
+      </div>
+      <label>6 个正码</label>
+      <div class="nums" id="fNums"></div>
+      <label>特别码</label>
+      <input id="fSpecial" type="number" min="1" max="49" placeholder="1–49">
+      <div class="btns">
+        <button class="primary" id="btnSave">保存并自动更新</button>
+        <button id="btnReset">清空表单</button>
+      </div>
+      <div class="hint" id="formMsg" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <h2>数据管理 <span class="badge">线上台账由元宝维护</span></h2>
+      <div class="btns" style="margin-bottom:10px">
+        <button class="primary" id="btnSync">🔄 同步最新台账</button>
+        <span class="hint" style="align-self:center;margin:0">我在对话框改完，你点一下或刷新页面就是最新</span>
+      </div>
+      <label>粘贴我给你的数据 JSON（对话里复制过来即可）</label>
+      <textarea id="pasteJson" rows="3" placeholder='{"records":[...],"hits":{...}} 或直接粘一条记录数组'></textarea>
+      <div class="btns">
+        <button id="btnPaste">粘贴导入并刷新</button>
+        <button id="btnLink">复制「本期数据链接」</button>
+      </div>
+      <input id="linkOut" readonly placeholder="点上面按钮生成；把链接发到手机点开，数据自动进去" style="margin-top:10px">
+      <div class="btns" style="margin-top:10px">
+        <button id="btnExport">导出 JSON</button>
+        <button id="btnImport">导入文件</button>
+        <button class="danger" id="btnClear">清空全部记录</button>
+      </div>
+      <input type="file" id="fileInput" accept=".json,application/json" hidden>
+      <div class="hint" id="dataMsg" style="margin-top:10px"></div>
+      <p class="hint" style="margin-top:10px">线上 <code>data.json</code> 由元宝通过仓库维护：你在对话框发开奖号或改需求，我更新线上台账，<b>你刷新页面或点「同步最新台账」即生效，永远不用上传文件、不用重装</b>。本机录入与粘贴导入仍可用，换设备也可点「本期数据链接」同步。</p>
+    </div>
+  </section>
+
+  <!-- 模块卡片 -->
+  <section id="p-modules" hidden>
+    <div class="card">
+      <h2>模块卡片 Tab</h2>
+      <div class="subtabs" id="subTabs"></div>
+      <div id="modDetail"></div>
+    </div>
+  </section>
+
+  <!-- 历史战绩 -->
+  <section id="p-history" hidden>
+    <div class="card">
+      <h2>开奖记录 / 历史战绩</h2>
+      <div id="historyTable"></div>
+    </div>
+  </section>
+
+  <!-- 回溯 -->
+  <section id="p-backtest" hidden>
+    <div class="card">
+      <h2>逐期命中回溯</h2>
+      <p class="hint">选择期号后，点击模块标签循环切换：<b>未判定 → 命中 ✓ → 未中 ✗ → 未判定</b>。判定依据需由你确认的规则填入；本页不自动推断命中。</p>
+      <label>选择期号</label>
+      <select id="btIssue"></select>
+      <div class="chips" id="btChips"></div>
+      <div class="kv" id="btSummary" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- 说明 -->
+  <section id="p-about" hidden>
+    <div class="card">
+      <h2>复述与核对要点</h2>
+      <div class="kv">
+        1. 版本标识冲突：标题 <code>v3.3</code> / 页内 <code>v3.4</code> / 页脚 <code>v3.0 · 数据统计演示</code>。<br>
+        2. 名称冲突：资料与链接为「六合智析 / liuhe-zhixi」，需求文字写作「竞彩智析」。<br>
+        3. 「候选池（两波+三头+七尾 . +七肖补充）」含多余分隔符「.」。<br>
+        4. 组合口径未定义：「4 组」「10 组」「8/10/12 码三中三」「6 正码中 3 即中」未给出基础集合与组合生成方式。<br>
+        5. 核心缺失：仅 UI 标签 + 免责声明，缺随机变量定义、样本空间、模块生成算法、命中判定、回溯统计口径与基准对照，<b>不可复现，尚不构成学术模型</b>。<br>
+        6. 逻辑冲突：「开奖为随机事件」与「给出下一期会开出的号码 / 本期推荐」互斥。<br>
+        7. 「自动同步」的数据来源、样本区间与更新机制未定义。
+      </div>
+    </div>
+    <div class="card">
+      <h2>关于「下一期号码」</h2>
+      <p class="hint">独立随机事件下，历史频率不具外推预测力；任何声称可由历史统计给出「下一期会开出的号码」在学术上不成立。本演示只提供描述性统计与回溯校验，不预测、不推荐、不涉投注。</p>
+    </div>
+    <div class="card">
+      <h2>以后加东西怎么弄</h2>
+      <div class="kv">
+        <b>✅ 线上版（GitHub Pages）</b>：你把令牌给我一次，我建仓、传文件、开 Pages 并把固定链接交给你；之后我在对话框里改，直接更新线上 <code>data.json</code>，<b>你刷新页面就是最新，零上传、零操作</b>。<br>
+        <b>✅ 加开奖 / 加回溯</b>：在对话框发 <code>期号 | 日期 | 6正码 | 特码</code>，我回一段 JSON 或一个带数据的链接，<b>粘贴或点开即生效</b>，不用上传、不用重装。<br>
+        <b>✅ 自己随手录</b>：直接在「录入开奖 6+1」里填，保存后各页立刻刷新。<br>
+        <b>✅ 换设备</b>：点「复制本期数据链接」，发到手机点开，数据自动合并。<br>
+        <b>✅ 改文案 / 加模块标签</b>：也可走数据链接下发配置，多数小改不必重传站点。<br>
+        <b>⚠️ 大改版</b>：整页结构重做时才需替换一次站点文件，次数很少。<br>
+        <b>📱 不用装 APK</b>：站点已支持 PWA，手机浏览器「添加到主屏幕」即可，页面更新自动生效，永远不用重装 App。<br><br>
+        <b>做不到</b>：我不能登录你的托管账号、不能在你不发消息时自动改线上内容、不能让两台设备后台自动互相同步。真要「多端后台实时互推」，需要加一个免费云数据库并首次配置一次，且密钥只能由你自己保管。
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    历史统计演示 · 开奖为随机事件 · 仅供研究参考 · 不构成投注建议<br>
+    六合智析 学术统计演示版 / 本地数据 · 无后端 · 无预测输出
+  </div>
+</div>
+
+<script>
+const MODULES = [
+  {id:'qixiao',  name:'七肖（特码）',        note:'需提供生肖–号码映射与「选七」生成规则'},
+  {id:'liangbo', name:'两波（特码）',        note:'需提供波色定义与选两波规则'},
+  {id:'santou',  name:'三头（特码）',        note:'需提供「头」的分段定义与选三规则'},
+  {id:'qiwei',   name:'七尾（特码）',        note:'需提供尾数定义与选七规则'},
+  {id:'pool',    name:'候选池（两波+三头+七尾+七肖补充）', note:'合并规则与去重口径待补'},
+  {id:'lianxiao',name:'连肖（7码生肖全中）', note:'「全中」判定口径待补'},
+  {id:'lian2',   name:'二连肖',              note:'组合生成与命中判定待补'},
+  {id:'lian3',   name:'三连肖',              note:'组合生成与命中判定待补'},
+  {id:'lian4',   name:'四连肖',              note:'组合生成与命中判定待补'},
+  {id:'sz8',     name:'8码三中三',           note:'原文注「6正码中3即中」，基础集合未说明'},
+  {id:'sz10',    name:'10码三中三',          note:'组合覆盖口径待补'},
+  {id:'sz12',    name:'12码三中三',          note:'组合覆盖口径待补'},
+  {id:'zm22',    name:'正码2码二中二（4组）',note:'「4组」来源集合未定义'},
+  {id:'zm33',    name:'正码3码三中三（10组）',note:'「10组」疑似 C(5,3)，基础码数未写明'}
+];
+const KEY = 'liuhe_research_v1';
+let state = {records:[], hits:{}};
+try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s&&s.records) state = Object.assign(state,s); }catch(e){}
+const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,'0');
+
+/* ===== 数据通道：本机 / 随站 data.json / 对话里给的链接或 JSON ===== */
+function mergeState(inc){
+  if(!inc || typeof inc!=='object') return false;
+  let changed = false;
+  if(Array.isArray(inc.records) && inc.records.length){
+    const map = new Map(state.records.map(r=>[String(r.issue), r]));
+    inc.records.forEach(r=>{ if(r && r.issue) map.set(String(r.issue), r); });
+    state.records = [...map.values()].sort((a,b)=>String(a.issue).localeCompare(String(b.issue)));
+    changed = true;
+  }
+  if(inc.hits && typeof inc.hits==='object' && Object.keys(inc.hits).length){
+    Object.keys(inc.hits).forEach(k=>{
+      if(k.charAt(0)==='_') return;                 // 跳过说明字段
+      state.hits[k] = Object.assign({}, state.hits[k], inc.hits[k]);
+    });
+    changed = true;
+  }
+  return changed;
+}
+function b64encode(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function b64decode(s){
+  const bin = atob(s.replace(/-/g,'+').replace(/_/g,'/'));
+  return new TextDecoder().decode(Uint8Array.from(bin, c=>c.charCodeAt(0)));
+}
+function buildDataLink(){
+  return location.origin + location.pathname + '#d=' + b64encode(JSON.stringify(state));
+}
+/* 链接里带数据：点开即合并入库，不用上传、不用重装 */
+function applyHash(){
+  const h = location.hash || '';
+  if(!h.startsWith('#d=')) return;
+  try{
+    const raw = decodeURIComponent(h.slice(3));
+    const inc = JSON.parse(raw.charAt(0)==='{' ? raw : b64decode(raw));
+    if(mergeState(inc)){ save(); renderStat(); renderHistory(); renderBacktest(); }
+  }catch(e){}
+  try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+}
+/* 线上台账由元宝维护：带 no-store 拉取，刷新/点同步即拿最新 */
+function loadSiteData(){
+  return fetch('./data.json?_=' + Date.now(), {cache:'no-store'})
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => {
+      if(mergeState(d)){ save(); renderStat(); renderHistory(); renderBacktest(); }
+      return d;
+    });
+}
+loadSiteData().catch(()=>{});
+applyHash();
+
+/* 主 tab */
+$('#mainTabs').addEventListener('click', e=>{
+  const t = e.target.closest('.tab'); if(!t) return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x===t));
+  ['overview','entry','modules','history','backtest','about'].forEach(p=>{
+    $('#p-'+p).hidden = (p !== t.dataset.p);
+  });
+  if(t.dataset.p==='history') renderHistory();
+  if(t.dataset.p==='backtest') renderBacktest();
+  if(t.dataset.p==='overview') renderStat();
+});
+
+/* 录入表单 */
+$('#fNums').innerHTML = Array.from({length:6},(_,i)=>
+  `<input type="number" min="1" max="49" id="n${i}" placeholder="正码${i+1}">`).join('');
+$('#fDate').value = new Date().toISOString().slice(0,10);
+function readForm(){
+  const issue = $('#fIssue').value.trim();
+  const date = $('#fDate').value;
+  const nums = Array.from({length:6},(_,i)=>Number($('#n'+i).value));
+  const sp = Number($('#fSpecial').value);
+  return {issue,date,nums,sp};
+}
+$('#btnReset').onclick = ()=>{
+  $('#fIssue').value=''; Array.from({length:6},(_,i)=>$('#n'+i).value=''); $('#fSpecial').value='';
+  $('#formMsg').textContent='';
+};
+$('#btnSave').onclick = ()=>{
+  const {issue,date,nums,sp} = readForm();
+  const msg = $('#formMsg');
+  if(!issue){ msg.textContent='请填写期号'; return; }
+  if(nums.some(v=>!Number.isInteger(v)||v<1||v>49)){ msg.textContent='6 个正码需为 1–49 的整数'; return; }
+  if(new Set(nums).size!==6){ msg.textContent='6 个正码不能重复'; return; }
+  if(!Number.isInteger(sp)||sp<1||sp>49){ msg.textContent='特别码需为 1–49 的整数'; return; }
+  if(nums.includes(sp)){ msg.textContent='特别码不能与正码重复'; return; }
+  const idx = state.records.findIndex(r=>r.issue===issue);
+  const rec = {issue,date,nums:nums.map(pad),sp:pad(sp),note:''};
+  if(idx>=0) state.records[idx]=rec; else state.records.push(rec);
+  state.records.sort((a,b)=>String(a.issue).localeCompare(String(b.issue)));
+  save(); msg.textContent = '已保存：'+issue+'（6+1 录入完成，未生成任何预测号）';
+  $('#btnReset').click(); renderStat(); renderBacktest();
+};
+
+/* 概览 */
+$('#overviewMods').innerHTML = MODULES.map(m=>
+  `<div class="mod"><b>${m.name}</b><span>${m.note}</span></div>`).join('');
+function renderStat(){
+  const n = state.records.length;
+  const judged = Object.values(state.hits).reduce((a,h)=>a+Object.values(h).filter(v=>v!==0).length,0);
+  $('#statBox').innerHTML = `已录入期数：<b>${n}</b> 期<br>
+    模块标签：<b>${MODULES.length}</b> 个<br>
+    已判定命中项：<b>${judged}</b> 项<br>
+    预测输出：<b>0</b>（本演示不提供）<br>
+    数据存储：本机 localStorage`;
+}
+
+/* 模块子 tab */
+$('#subTabs').innerHTML = MODULES.map((m,i)=>
+  `<div class="subtab ${i===0?'on':''}" data-i="${i}">${m.name}</div>`).join('');
+function showMod(i){
+  const m = MODULES[i];
+  $('#modDetail').innerHTML = `<div class="card" style="margin:0">
+    <h2>${m.name}</h2>
+    <p class="hint">${m.note}。</p>
+    <label>本期候选（演示容器 · 可留空 / 不参与任何预测计算）</label>
+    <textarea id="modText" rows="3" placeholder="如需留存外部给出的候选，可粘贴于此；本页不会据此推算下一期号码"></textarea>
+    <div class="btns"><button class="primary mini" id="modSave">暂存到本期结构</button></div>
+    <div class="hint" id="modMsg" style="margin-top:8px"></div>
+  </div>`;
+  $('#modSave').onclick = ()=>{
+    state.hits['__candidate_'+m.id] = {'0':$('#modText').value};
+    save(); $('#modMsg').textContent='已暂存（仅文本留存，不做命中推断）';
+  };
+  try{ $('#modText').value = (state.hits['__candidate_'+m.id]||{})['0']||''; }catch(e){}
+}
+$('#subTabs').addEventListener('click',e=>{
+  const s=e.target.closest('.subtab'); if(!s)return;
+  document.querySelectorAll('.subtab').forEach(x=>x.classList.toggle('on',x===s));
+  showMod(Number(s.dataset.i));
+});
+showMod(0);
+
+/* 历史 */
+function renderHistory(){
+  const box=$('#historyTable');
+  if(!state.records.length){ box.innerHTML='<div class="empty">暂无记录，请先在「录入开奖 6+1」添加</div>'; return; }
+  box.innerHTML = `<table><thead><tr><th>期号</th><th>日期</th><th>6 正码 + 特码</th><th>已判定</th><th>操作</th></tr></thead><tbody>`+
+    state.records.map(r=>{
+      const h=state.hits[r.issue]||{};
+      const j=Object.values(h).filter(v=>v===1||v===2).length;
+      return `<tr><td>${r.issue}</td><td>${r.date||'—'}</td>
+        <td class="nums-cell">${r.nums.join(' ')} <span class="special">${r.sp}</span></td>
+        <td>${j}/${MODULES.length}</td>
+        <td><button class="mini danger" data-del="${r.issue}">删除</button></td></tr>`;
+    }).join('')+'</tbody></table>';
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.del;
+    state.records=state.records.filter(r=>r.issue!==k); delete state.hits[k];
+    save(); renderHistory(); renderBacktest(); renderStat();
+  });
+}
+
+/* 回溯 */
+function renderBacktest(){
+  const sel=$('#btIssue');
+  sel.innerHTML = state.records.length
+    ? state.records.map(r=>`<option value="${r.issue}">${r.issue} · ${r.nums.join(' ')} / ${r.sp}</option>`).join('')
+    : '<option value="">（暂无期号）</option>';
+  renderChips();
+}
+$('#btIssue').onchange = renderChips;
+function renderChips(){
+  const issue=$('#btIssue').value, box=$('#btChips'), sum=$('#btSummary');
+  if(!issue){ box.innerHTML='<div class="empty">请先录入开奖记录</div>'; sum.textContent=''; return; }
+  const h = state.hits[issue] || (state.hits[issue]={});
+  box.innerHTML = MODULES.map(m=>{
+    const v=h[m.id]||0;
+    const cls = v===1?'hit':v===2?'miss':'';
+    const mark = v===1?' ✓':v===2?' ✗':'';
+    return `<div class="chip ${cls}" data-id="${m.id}">${m.name}${mark}</div>`;
+  }).join('');
+  box.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    const id=c.dataset.id; h[id]=((h[id]||0)+1)%3; save(); renderChips();
+  });
+  const hit=Object.values(h).filter(v=>v===1).length, miss=Object.values(h).filter(v=>v===2).length;
+  sum.innerHTML=`本期 <b>${issue}</b>：命中 <b style="color:var(--ok)">${hit}</b> · 未中 <b style="color:var(--no)">${miss}</b> · 未判定 <b>${MODULES.length-hit-miss}</b><br>
+    <span style="color:var(--sub)">判定依据请以已确认的规则为准；本页不自动推断，也不据此推下一期号码。</span>`;
+}
+
+/* 导入导出 */
+$('#btnExport').onclick = ()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='liuhe_research_data.json'; a.click(); URL.revokeObjectURL(a.href);
+};
+$('#btnImport').onclick = ()=>$('#fileInput').click();
+$('#fileInput').onchange = e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const rd=new FileReader(); rd.onload=()=>{
+    try{ const d=JSON.parse(rd.result); if(!d.records) throw 0;
+      state=Object.assign({records:[],hits:{}},d); save();
+      renderStat(); renderHistory(); renderBacktest(); alert('导入成功');
+    }catch(err){ alert('文件格式不正确'); }
+  }; rd.readAsText(f);
+};
+$('#btnClear').onclick = ()=>{
+  if(!confirm('确认清空全部记录与回溯判定？此操作不可撤销。'))return;
+  state={records:[],hits:{}}; save(); renderStat(); renderHistory(); renderBacktest();
+  $('#dataMsg').textContent='已清空（data.json 里的基础数据会在下次打开时重新补入）';
+};
+
+/* 拉取线上台账：我在对话里更新后，点一下或刷新即同步 */
+$('#btnSync').onclick = ()=>{
+  const msg = $('#dataMsg');
+  msg.textContent = '正在同步线上台账…';
+  loadSiteData().then(()=>{
+    msg.textContent = '已同步：当前共 ' + state.records.length + ' 期（线上为准，无需上传）';
+  }).catch(()=>{
+    msg.textContent = '暂未读到线上台账，本机记录不受影响';
+  });
+};
+
+/* 对话里给一段 JSON → 粘贴即入库 */
+$('#btnPaste').onclick = ()=>{
+  const txt = $('#pasteJson').value.trim(), msg = $('#dataMsg');
+  if(!txt){ msg.textContent='请先粘贴内容'; return; }
+  try{
+    let inc = JSON.parse(txt);
+    if(Array.isArray(inc)) inc = {records: inc};       // 也支持只粘一组记录
+    if(!inc || typeof inc!=='object') throw 0;
+    if(!mergeState(inc)) throw 0;
+    save(); renderStat(); renderHistory(); renderBacktest();
+    msg.textContent = '已导入并刷新：当前共 ' + state.records.length + ' 期（无需上传、无需重装）';
+    $('#pasteJson').value='';
+  }catch(e){ msg.textContent='格式不对，请把对话里给的整段 JSON 原样粘进来'; }
+};
+/* 生成本期数据链接：点开即同步，转发到手机也一样 */
+$('#btnLink').onclick = ()=>{
+  if(!location.protocol.startsWith('http')){
+    $('#dataMsg').textContent='数据链接需要在部署后的 https 固定链接上生成；本地双击预览时可先用「粘贴导入」';
+    return;
+  }
+  const link = buildDataLink();
+  $('#linkOut').value = link;
+  $('#linkOut').select();
+  const done = ()=>{ $('#dataMsg').textContent='链接已复制；发给手机或别人点开，数据会自动进去'; };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(done).catch(()=>{ document.execCommand('copy'); done(); });
+  }else{ document.execCommand('copy'); done(); }
+};
+
+renderStat(); renderBacktest();
+
+/* 离线缓存是可选增强：有 sw.js 才注册；只拖单个 index.html 时静默跳过 */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    fetch('./sw.js', {method:'HEAD'})
+      .then(r => r.ok ? navigator.serviceWorker.register('./sw.js') : null)
+      .catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
