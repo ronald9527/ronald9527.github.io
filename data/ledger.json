@@ -883,7 +883,7 @@
     "status": "已全量同步到云端",
     "provider": "GitHub Pages（0 元）",
     "repo": "ronald9527/ronald9527.github.io",
-    "commit": "b4efd675",
+    "commit": "a8c656b0",
     "site": "https://ronald9527.github.io/",
     "authority": "https://ronald9527.github.io/data.json",
     "synced_at": "2026-11-17",
@@ -891,7 +891,8 @@
     "behavior": "页面启动以 no-store 拉取云端 data.json；任何设备打开同一链接看到同一份数据，刷新即最新；本机 localStorage 仅离线兜底",
     "update_flow": "用户在对话里发开奖号/改需求 → 元宝更新 data.json 并推送仓库 → 用户刷新即见，零上传零重装",
     "records": 20,
-    "authoritative": "页面启动以云端 records 覆盖本机，避免旧期号键残留"
+    "authoritative": "页面启动以云端 records 覆盖本机，避免旧期号键残留",
+    "batch": "当前批次 2026301~2026320 / 2026-10-28~11-16（用户手机截图）"
   },
   "special_rule": {
     "status": "已确认",
