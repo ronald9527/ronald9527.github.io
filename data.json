@@ -1,0 +1,11 @@
+{
+  "_schema": "liuhe-ledger-v1",
+  "_maintained_by": "Yuanbao · 通过 GitHub Contents API 维护",
+  "_updated_at": "2026-11-17",
+  "_note": "线上台账。用户在对话框发开奖或改需求后，由元宝更新本文件并推送到仓库；页面启动/点『同步最新台账』时以本文件为准覆盖本机记录。当前尚无开奖记录。",
+  "records": [],
+  "hits": {},
+  "changelog": [
+    { "at": "2026-11-17", "by": "Yuanbao", "action": "建立线上台账，等待首期开奖" }
+  ]
+}
