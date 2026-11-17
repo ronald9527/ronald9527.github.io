@@ -83,6 +83,14 @@
   .wball.square{border-radius:5px}
   .wball.diamond{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);width:29px;height:29px;flex-basis:29px}
   .wball.sp{outline:2px solid #f0b429;outline-offset:1px}
+  /* ===== 每球生肖小字（圈下） ===== */
+  .balls{align-items:flex-start}
+  .balls .eq{margin-top:7px}
+  .ballcell{display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:28px;vertical-align:top}
+  .ballcell .zx{font-size:9px;line-height:1;color:var(--sub);white-space:nowrap;font-style:normal;letter-spacing:0}
+  .ballcell .zx.spz{color:#b8860b;font-weight:700}
+  .zsum{display:block;margin-top:3px;font-size:10.5px;color:#8a5a00;font-variant-numeric:tabular-nums}
+
   .balls{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
   .balls .eq{color:var(--sub);font-weight:700;margin:0 2px}
   .wavesum{display:block;margin-top:5px;font-size:10.5px;color:var(--sub);font-variant-numeric:tabular-nums}
@@ -469,11 +477,34 @@ function waveOf(n){
   for(const k of ['red','blue','green']) if(WAVE_FALLBACK[k].indexOf(num)>=0) return k;
   return 'unknown';
 }
+
+/* ===== 生肖：从已登记对照表查，规则未加载时按 2026 马年 (n-1)%12 兜底 ===== */
+const ZODIAC_ORDER = ['马','蛇','龙','兔','虎','牛','鼠','猪','狗','鸡','猴','羊'];
+function zodiacOf(n){
+  const num = parseInt(n,10), z = (state.rules||{}).zodiac;
+  if(z && typeof z==='object'){
+    for(const k of Object.keys(z)){
+      const v = z[k], arr = Array.isArray(v) ? v : ((v && v.numbers) || []);
+      if(Array.isArray(arr) && arr.some(x=>Number(x)===num)) return k;
+    }
+  }
+  return (num>=1 && num<=49) ? ZODIAC_ORDER[(num-1)%12] : '—';
+}
+function zodiacSummary(nums, sp){
+  const c={};
+  nums.concat([sp]).forEach(n=>{ const z=zodiacOf(n); c[z]=(c[z]||0)+1; });
+  const parts=ZODIAC_ORDER.filter(z=>c[z]).map(z=>`${z}${c[z]}`);
+  return `<span class="zsum">生肖 ${parts.join(' · ')}</span>`;
+}
+
 function ballHTML(n, isSp){
   const w = waveOf(n), cfg = waveCfg(), shape = cfg.map[w]||'circle';
-  const zh = {red:'红波',blue:'蓝波',green:'绿波',unknown:'未登记'};
+  const zh = {red:'红波',blue:'蓝波',green:'绿波',unknown:'未登记'}, zx = zodiacOf(n);
   const cls = 'wball '+(w==='unknown'?'unknown':w)+' '+shape+(isSp?' sp':'');
-  return `<span class="${cls}" title="${String(n)} · ${zh[w]||w}${isSp?' · 特码':''}">${String(n)}</span>`;
+  return `<span class="ballcell" title="${String(n)} · ${zh[w]||w} · ${zx}${isSp?' · 特码':''}">`
+       + `<span class="${cls}">${String(n)}</span>`
+       + `<span class="zx${isSp?' spz':''}">${zx}</span>`
+       + `</span>`;
 }
 function waveSummary(nums, sp){
   const c={red:0,blue:0,green:0,unknown:0};
@@ -486,7 +517,8 @@ function renderWaveLegend(){
   box.innerHTML = ['red','blue','green'].map(k=>{
     const sh=cfg.map[k]||'circle';           // 统一圆形，颜色即波色
     return `<span class="lg"><i class="wball ${k} ${sh}"></i>${nm[k]}</span>`;
-  }).join('') + `<span class="lg"><b>=</b> 之后为特码（金边）</span>`;
+  }).join('') + `<span class="lg"><b>=</b> 之后为特码（金边）</span>`
+             + `<span class="lg">圈下小字＝生肖</span>`;
 }
 
 function renderHistory(){
@@ -498,7 +530,7 @@ function renderHistory(){
       const h=state.hits[r.issue]||{};
       const j=Object.values(h).filter(v=>v===1||v===2).length;
       return `<tr><td>${r.issue}</td><td>${r.date||'—'}</td>
-        <td class="nums-cell"><div class="balls">${r.nums.map(n=>ballHTML(n,false)).join('')}<span class="eq">=</span>${ballHTML(r.sp,true)}</div>${waveSummary(r.nums,r.sp)}</td>
+        <td class="nums-cell"><div class="balls">${r.nums.map(n=>ballHTML(n,false)).join('')}<span class="eq">=</span>${ballHTML(r.sp,true)}</div>${waveSummary(r.nums,r.sp)}${zodiacSummary(r.nums,r.sp)}</td>
         <td>${j}/${MODULES.length}</td>
         <td><button class="mini danger" data-del="${r.issue}">删除</button></td></tr>`;
     }).join('')+'</tbody></table>';
