@@ -1643,7 +1643,7 @@
     "status": "已全量同步到云端",
     "provider": "GitHub Pages（0 元）",
     "repo": "ronald9527/ronald9527.github.io",
-    "commit": "66c4a29c",
+    "commit": "dfee5292",
     "site": "https://ronald9527.github.io/",
     "authority": "https://ronald9527.github.io/data.json",
     "synced_at": "2026-11-17",
@@ -1819,16 +1819,15 @@
   },
   "wave_shapes": {
     "status": "已登记",
-    "note": "历史战绩里每个号码按波色渲染成对应形状；形状映射可在对话框一句话改",
+    "uniform_shape": "circle",
+    "note": "全部号码统一用圆形圈圈；圈圈颜色即波色：红波红圈 / 蓝波蓝圈 / 绿波绿圈。= 之后为特码，金色描边。形状不再区分波色。",
     "map": {
       "red": "circle",
-      "blue": "square",
-      "green": "diamond"
+      "blue": "circle",
+      "green": "circle"
     },
     "shape_labels": {
-      "circle": "圆",
-      "square": "方",
-      "diamond": "菱"
+      "circle": "圆"
     },
     "labels": {
       "red": "红波",
@@ -1841,7 +1840,9 @@
       "blue": "#3b7ddd",
       "green": "#2fa36b"
     },
-    "registered_at": "2026-11-17"
+    "registered_at": "2026-11-17",
+    "revised_at": "2026-11-17",
+    "revision": "用户纠正：不要方/菱，全部用圆，只靠圈圈颜色区分波色"
   },
   "_note": "云端公开台账快照（业务数据）；对话操作日志不公开"
 }

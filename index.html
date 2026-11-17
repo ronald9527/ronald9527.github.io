@@ -455,7 +455,7 @@ const WAVE_FALLBACK = {
 };
 function waveCfg(){
   const cfg = (state.rules||{}).wave_shapes;
-  return (cfg && cfg.map) ? cfg : {map:{red:'circle',blue:'square',green:'diamond'}};
+  return (cfg && cfg.map) ? cfg : {map:{red:'circle',blue:'circle',green:'circle'}};
 }
 function waveOf(n){
   const num = parseInt(n,10), b = (state.rules||{}).bose;
@@ -482,10 +482,10 @@ function waveSummary(nums, sp){
 }
 function renderWaveLegend(){
   const box=$('#waveLegend'); if(!box) return;
-  const cfg=waveCfg(), nm={red:'红波',blue:'蓝波',green:'绿波'}, sn={circle:'圆',square:'方',diamond:'菱'};
+  const cfg=waveCfg(), nm={red:'红波',blue:'蓝波',green:'绿波'};
   box.innerHTML = ['red','blue','green'].map(k=>{
-    const sh=cfg.map[k]||'circle';
-    return `<span class="lg"><i class="wball ${k} ${sh}"></i>${nm[k]}·${sn[sh]||sh}</span>`;
+    const sh=cfg.map[k]||'circle';           // 统一圆形，颜色即波色
+    return `<span class="lg"><i class="wball ${k} ${sh}"></i>${nm[k]}</span>`;
   }).join('') + `<span class="lg"><b>=</b> 之后为特码（金边）</span>`;
 }
 
