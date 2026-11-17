@@ -360,7 +360,9 @@ $('#overviewMods').innerHTML = MODULES.map(m=>
 function renderStat(){
   const n = state.records.length;
   const judged = Object.values(state.hits).reduce((a,h)=>a+Object.values(h).filter(v=>v!==0).length,0);
+  const latest = state.records.length ? state.records.slice().sort((a,b)=>String(b.issue).localeCompare(String(a.issue)))[0] : null;
   $('#statBox').innerHTML = `已录入期数：<b>${n}</b> 期<br>
+    最新一期：<b>${latest ? latest.issue+' / '+latest.date : '—'}</b><br>
     模块标签：<b>${MODULES.length}</b> 个<br>
     基础口径：<b>${state.rules ? state.rules.year+' '+state.rules.zodiac_year+'年（已登记）' : '未登记'}</b><br>
     已判定命中项：<b>${judged}</b> 项<br>
@@ -426,7 +428,7 @@ function renderHistory(){
   const box=$('#historyTable');
   if(!state.records.length){ box.innerHTML='<div class="empty">暂无记录，请先在「录入开奖 6+1」添加</div>'; return; }
   box.innerHTML = `<table><thead><tr><th>期号</th><th>日期</th><th>6 正码 + 特码</th><th>已判定</th><th>操作</th></tr></thead><tbody>`+
-    state.records.map(r=>{
+    state.records.slice().sort((a,b)=>String(b.issue).localeCompare(String(a.issue))).map(r=>{
       const h=state.hits[r.issue]||{};
       const j=Object.values(h).filter(v=>v===1||v===2).length;
       return `<tr><td>${r.issue}</td><td>${r.date||'—'}</td>
