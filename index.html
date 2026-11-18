@@ -70,7 +70,7 @@
   .kv code{background:#f0f2f8;padding:1px 5px;border-radius:5px;font-size:12px}
   .badge{display:inline-block;font-size:11px;color:var(--sub);background:#f0f2f8;border-radius:6px;padding:2px 7px;margin-left:6px}
 
-  /* ===== 波色形状球（历史战绩） ===== */
+  /* ===== 波色形状球（历史开奖） ===== */
   .wavebar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:0 0 10px;font-size:11.5px;color:var(--sub)}
   .wavebar .lg{display:inline-flex;align-items:center;gap:5px}
   .wball{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;flex:0 0 27px;
@@ -98,6 +98,47 @@
   .wavesum{display:block;margin-top:5px;font-size:10.5px;color:var(--sub);font-variant-numeric:tabular-nums}
   .wavesum b{font-weight:600}
   .wavesum .r{color:#e5484d}.wavesum .b{color:#3b7ddd}.wavesum .g{color:#2fa36b}
+
+  /* ===== 历史开奖 · 整洁卡片版 ===== */
+  .hist-card{padding:16px 14px}
+  .hist-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+  .hist-head h2{margin:0;font-size:16px;letter-spacing:.3px}
+  .hist-count{font-size:11.5px;color:var(--sub);background:#f5f7fc;border:1px solid var(--line);
+    border-radius:999px;padding:4px 10px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .wavebar{background:#f8f9fd;border:1px solid var(--line);border-radius:12px;
+    padding:9px 11px;gap:12px;margin:0 0 12px}
+  .wavebar .lg{gap:6px}
+  .hist-tools{display:flex;gap:8px;margin-bottom:11px}
+  .hist-search{width:auto;flex:1;min-width:0;padding:9px 12px;font-size:13px;border-radius:10px}
+  .hist-tools .mini{flex:0 0 auto;color:var(--sub);padding:9px 12px}
+  .hist-sumbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    font-size:11.5px;color:var(--sub);margin:0 2px 9px;font-variant-numeric:tabular-nums}
+  .hist-sumbar b{color:var(--ink);font-weight:600}
+  .hist-list{display:flex;flex-direction:column;gap:9px}
+  .hrec{border:1px solid var(--line);border-radius:13px;background:#fff;padding:10px 11px;
+    transition:box-shadow .18s,border-color .18s}
+  .hrec:hover{border-color:#d8dff5;box-shadow:0 4px 14px rgba(40,60,110,.07)}
+  .hrec.latest{border-color:#c9d4ff;background:linear-gradient(180deg,#fbfcff,#fff)}
+  .hrec-top{display:flex;align-items:center;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+  .hrec-issue{font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.3px}
+  .hrec-date{font-size:11.5px;color:var(--sub)}
+  .hrec-tag{font-size:10px;color:var(--brand);background:#eef1ff;border-radius:5px;padding:2px 6px}
+  .hrec-j{font-size:10.5px;color:var(--sub);background:#f0f2f8;border-radius:999px;
+    padding:2px 8px;margin-left:auto;font-variant-numeric:tabular-nums}
+  .hrec-del{border:none;background:transparent;color:#c3c8d4;font-size:16px;line-height:1;
+    padding:2px 5px;border-radius:6px;cursor:pointer}
+  .hrec-del:hover{color:var(--no);background:#fdecec}
+  .hrec-balls{background:#fafbfe;border:1px solid #eef0f7;border-radius:10px;padding:9px 8px}
+  .hrec-balls .balls{gap:5px}
+  .hrec-balls .eq{color:#9aa2b4;font-weight:700;margin:0 3px;font-size:12px}
+  .hrec-sums{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .hrec-sums .wavesum,.hrec-sums .zsum{display:inline-block;margin:0;font-size:10.5px;
+    background:#f5f7fc;border:1px solid var(--line);border-radius:8px;padding:4px 8px;
+    color:var(--sub);line-height:1.4}
+  .hrec-sums .zsum{background:#fffaf0;border-color:#f2e2be;color:#8a5a00}
+  .hrec-sums b{font-weight:600}
+  .hrec-sums .r{color:#e5484d}.hrec-sums .b{color:#3b7ddd}.hrec-sums .g{color:#2fa36b}
+  .hist-empty{color:var(--sub);text-align:center;padding:24px 0;font-size:13px}
 </style>
 </head>
 <body>
@@ -116,7 +157,7 @@
     <div class="tab on" data-p="overview">概览</div>
     <div class="tab" data-p="entry">录入开奖 6+1</div>
     <div class="tab" data-p="modules">模块卡片</div>
-    <div class="tab" data-p="history">历史战绩</div>
+    <div class="tab" data-p="history">历史开奖</div>
     <div class="tab" data-p="backtest">命中回溯</div>
     <div class="tab" data-p="about">模型说明</div>
   </div>
@@ -138,7 +179,7 @@
   <section id="p-entry" hidden>
     <div class="card">
       <h2>📝 录入开奖号码（6 正码 + 1 特别码）</h2>
-      <p class="hint">号码范围 1–49；6 个正码互不重复，特别码不与正码重复。保存后自动进入历史战绩与回溯面板。</p>
+      <p class="hint">号码范围 1–49；6 个正码互不重复，特别码不与正码重复。保存后自动进入历史开奖与回溯面板。</p>
       <div class="row">
         <div><label>期号</label><input id="fIssue" placeholder="如 2026116"></div>
         <div><label>开奖日期</label><input id="fDate" type="date"></div>
@@ -190,11 +231,19 @@
     </div>
   </section>
 
-  <!-- 历史战绩 -->
+  <!-- 历史开奖 -->
   <section id="p-history" hidden>
-    <div class="card">
-      <h2>开奖记录 / 历史战绩</h2>
+    <div class="card hist-card">
+      <div class="hist-head">
+        <h2>历史开奖</h2>
+        <span class="hist-count" id="histCount"></span>
+      </div>
       <div class="wavebar" id="waveLegend"></div>
+      <div class="hist-tools">
+        <input id="histSearch" class="hist-search" type="text" placeholder="筛选期号 / 日期 / 号码…" autocomplete="off" />
+        <button class="mini" id="histClear" type="button">清除</button>
+      </div>
+      <div class="hist-sumbar" id="histSumBar"></div>
       <div id="historyTable"></div>
     </div>
   </section>
@@ -523,24 +572,54 @@ function renderWaveLegend(){
              + `<span class="lg">圈内下行＝生肖</span>`;
 }
 
-function renderHistory(){
-  renderWaveLegend();
-  const box=$('#historyTable');
-  if(!state.records.length){ box.innerHTML='<div class="empty">暂无记录，请先在「录入开奖 6+1」添加</div>'; return; }
-  box.innerHTML = `<table><thead><tr><th>期号</th><th>日期</th><th>6 正码 = 特码</th><th>已判定</th><th>操作</th></tr></thead><tbody>`+
-    state.records.slice().sort((a,b)=>String(b.issue).localeCompare(String(a.issue))).map(r=>{
-      const h=state.hits[r.issue]||{};
-      const j=Object.values(h).filter(v=>v===1||v===2).length;
-      return `<tr><td>${r.issue}</td><td>${r.date||'—'}</td>
-        <td class="nums-cell"><div class="balls">${r.nums.map(n=>ballHTML(n,false)).join('')}<span class="eq">=</span>${ballHTML(r.sp,true)}</div>${waveSummary(r.nums,r.sp)}${zodiacSummary(r.nums,r.sp)}</td>
-        <td>${j}/${MODULES.length}</td>
-        <td><button class="mini danger" data-del="${r.issue}">删除</button></td></tr>`;
-    }).join('')+'</tbody></table>';
+function histFiltered(){
+  const inp=$('#histSearch'), q=((inp&&inp.value)||'').trim().toLowerCase();
+  const all=state.records.slice().sort((a,b)=>String(b.issue).localeCompare(String(a.issue)));
+  if(!q) return all;
+  return all.filter(r => String(r.issue).toLowerCase().includes(q)
+      || String(r.date||'').toLowerCase().includes(q)
+      || (r.nums||[]).some(n=>String(n).toLowerCase().includes(q))
+      || String(r.sp||'').toLowerCase().includes(q));
+}
+function renderHistoryList(){
+  const box=$('#historyTable'); if(!box) return;
+  const list=histFiltered(), total=state.records.length;
+  const gap=(typeof state.paginationGap==='number')?state.paginationGap:31;
+  const cnt=$('#histCount'), sum=$('#histSumBar');
+  if(cnt) cnt.textContent=`共 ${total} 期 · 待补 ${gap} 期`;
+  if(sum) sum.innerHTML=`<span>显示 <b>${list.length}</b> / 共 ${total} 期</span><span>最新在前 · 最后一位＝特码</span>`;
+  if(!total){ box.innerHTML='<div class="hist-empty">暂无记录，请先在「录入开奖 6+1」添加</div>'; return; }
+  if(!list.length){ box.innerHTML='<div class="hist-empty">没有匹配的记录，点「清除」看全部</div>'; return; }
+  const inp=$('#histSearch'), filtering=!!(((inp&&inp.value)||'').trim());
+  box.innerHTML='<div class="hist-list">'+list.map((r,idx)=>{
+    const h=state.hits[r.issue]||{};
+    const j=Object.values(h).filter(v=>v===1||v===2).length;
+    const isLatest = idx===0 && !filtering;
+    return `<div class="hrec${isLatest?' latest':''}">
+      <div class="hrec-top">
+        <span class="hrec-issue">${r.issue}</span>
+        ${isLatest?'<span class="hrec-tag">最新</span>':''}
+        <span class="hrec-date">${r.date||'—'}</span>
+        <span class="hrec-j">${j}/${MODULES.length}</span>
+        <button class="hrec-del" data-del="${r.issue}" title="删除本期" aria-label="删除本期">×</button>
+      </div>
+      <div class="hrec-balls"><div class="balls">${r.nums.map(n=>ballHTML(n,false)).join('')}<span class="eq">=</span>${ballHTML(r.sp,true)}</div></div>
+      <div class="hrec-sums">${waveSummary(r.nums,r.sp)}${zodiacSummary(r.nums,r.sp)}</div>
+    </div>`;
+  }).join('')+'</div>';
   box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
     const k=b.dataset.del;
+    if(!confirm('删除本期 '+k+' 的开奖记录？')) return;
     state.records=state.records.filter(r=>r.issue!==k); delete state.hits[k];
     save(); renderHistory(); renderBacktest(); renderStat();
   });
+}
+function renderHistory(){
+  renderWaveLegend();
+  const si=$('#histSearch'), sc=$('#histClear');
+  if(si) si.oninput=renderHistoryList;
+  if(sc) sc.onclick=()=>{ const s=$('#histSearch'); if(s){s.value=''; s.focus();} renderHistoryList(); };
+  renderHistoryList();
 }
 
 /* 回溯 */
